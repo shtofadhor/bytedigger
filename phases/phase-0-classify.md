@@ -56,7 +56,8 @@ echo "Scratchpad created: $SCRATCHPAD"
 **Inject prior learnings** (after scratchpad creation, before Phase 1):
 ```bash
 SCRATCHPAD=$(grep '^scratchpad_dir:' build-state.yaml | sed 's/^scratchpad_dir:[[:space:]]*//; s/^"//; s/"$//')
-KEYWORDS=$(python3 -c "import re,pathlib;m=re.search(r'task:\s*[\"'\'']*([^\"'\''\\n]+)',pathlib.Path('build-state.yaml').read_text());print(m.group(1).strip() if m else 'build')" | tr ' ' '\n' | awk 'length>3' | tr '\n' ' ')
+KEYWORDS=$(grep '^task:' build-state.yaml | sed 's/^task:[[:space:]]*//; s/^"//; s/"$//' | tr ' ' '\n' | awk 'length>3' | tr '\n' ' ')
+[ -z "$KEYWORDS" ] && KEYWORDS="build"
 bash scripts/learning-store.sh inject "$KEYWORDS" > "${SCRATCHPAD}/research/prior-learnings.md" 2>/dev/null || true
 # Remove empty prior-learnings.md (no learnings found)
 [ -s "${SCRATCHPAD}/research/prior-learnings.md" ] || rm -f "${SCRATCHPAD}/research/prior-learnings.md"
